@@ -49,26 +49,12 @@ using VRC.Animation;
 
 namespace AntiKickStuff
 {
-    public static class BuildInfo
-    {
-        public const string Name = "AntiKick"; // Name of the Mod.  (MUST BE SET)
-        public const string Author = "KITTY#0666"; // Author of the Mod.  (Set as null if none)
-        public const string Company = null; // Company that made the Mod.  (Set as null if none)
-        public const string Version = "1.o"; // Version of the Mod.  (MUST BE SET)
-        public const string DownloadLink = "discord.gg/PQjc7FT"; // Download Link for the Mod.  (Set as null if none)
-    }
 
     public class AntiKick : MelonMod
     {
         public override void OnApplicationStart()
         {ApplyPatches();
         }
-		public override void OnLevelWasLoaded(int level)
-		{
-		}
-        public override void OnLevelWasInitialized(int level)
-		{
-		}
         public override void OnUpdate()
       {
       }
@@ -88,22 +74,25 @@ namespace AntiKickStuff
             try
             {
                 EventPatches();
-                new AntiKickStuff.Patching.Patch("Moderation", typeof(ModerationManager).GetMethod("KickUserRPC"), GetPatch("AntiKickkk"), null);
-                new AntiKickStuff.Patching.Patch("Moderation", typeof(ModerationManager).GetMethod("Method_Private_Void_Boolean_PDM_0"), GetPatch("KickPatch"), null);
-                new AntiKickStuff.Patching.Patch("Moderation", typeof(ModerationManager).GetMethod("Method_Public_Boolean_String_String_String_1"), GetPatch("CanEnterPublicWorldsPatch"), null);
-                new AntiKickStuff.Patching.Patch("Moderation", typeof(ModerationManager).GetMethod("Method_Public_Boolean_String_String_String_0"), GetPatch("IsKickedFromWorldPatch"), null);
-                new AntiKickStuff.Patching.Patch("Moderation", typeof(ModerationManager).GetMethod("WarnUserRPC"), GetPatch("WarnPatch"), null);
-                foreach(var methodInfo in typeof(ModerationManager).GetMethods()){
-                    if(methodInfo.Name.Contains("Method_Private_Void_String_Boolean_Player_")){new AntiKickStuff.Patching.Patch("Moderation",typeof(ModerationManager).GetMethod(methodInfo.Name),GetPatch("allKickPatch"),null);
-                    }
+            ApplyPatch(typeof(ModerationManager),"KickUserRPC","AntiKick");
+            ApplyPatch(typeof(ModerationManager),"Method_Private_Void_Boolean_PDM_0","KickPatch");
+            ApplyPatch(typeof(ModerationManager),"Method_Public_Boolean_String_String_String_1","CanEnterPublicWorldsPatch");
+            ApplyPatch(typeof(ModerationManager),"Method_Public_Boolean_String_String_String_0","IsKickedFromWorldPatch");
+            ApplyPatch(typeof(ModerationManager),"WarnUserRPC","WarnPatch");
+            ApplyPatch(typeof(ModerationManager),"Method_Public_Boolean_String_8","IsBlockedEitherWayPatch");
+            foreach(var methodInfo in typeof(ModerationManager).GetMethods()){
+                if(methodInfo.Name.Contains("Method_Private_Void_String_Boolean_Player_")){ApplyPatch(typeof(ModerationManager),methodInfo.Name,"allKickPatch");
                 }
-                foreach(var methodInfo in typeof(ModerationManager).GetMethods()){
-                    if(methodInfo.Name.Contains("ApiPlayerModeration_Action_1_Strin")){new AntiKickStuff.Patching.Patch("Moderation",typeof(ModerationManager).GetMethod(methodInfo.Name),GetPatch("allKickPatch1"),null);
-                    }
+            }
+            foreach(var methodInfo in typeof(ModerationManager).GetMethods()){
+                if(methodInfo.Name.Contains("ApiPlayerModeration_Action_1_Strin")){ApplyPatch(typeof(ModerationManager),methodInfo.Name,"allKickPatch1");
                 }
-                new AntiKickStuff.Patching.Patch("Moderation", typeof(ModerationManager).GetMethod("Method_Private_Void_String_ModerationType_String_ModerationTimeRange_String_String_Action_1_ApiModelContainer_1_ApiModeration_Action_1_ApiModelContainer_1_ApiModeration_PDM_0"), GetPatch("pleaseEndThis"), null);
-                new AntiKickStuff.Patching.Patch("Moderation", typeof(ModerationManager).GetMethod("ModForceOffMicRPC"), GetPatch("ModForceOffMicPatch"), null);
-                new AntiKickStuff.Patching.Patch("Moderation", typeof(ModerationManager).GetMethod("MuteChangeRPC"), GetPatch("MutePatch"), null);
+            }
+            ApplyPatch(typeof(ModerationManager),"Method_Private_Void_String_ModerationType_String_ModerationTimeRange_String_String_Action_1_ApiModelContainer_1_ApiModeration_Action_1_ApiModelContainer_1_ApiModeration_PDM_0","pleaseEndThis");
+            ApplyPatch(typeof(ModerationManager),"Method_Private_Void_String_ModerationType_String_ModerationTimeRange_String_String_Action_1_ApiModelContainer_1_ApiModeration_Action_1_ApiModelContainer_1_ApiModeration_PDM_0","pleaseEndThis");
+            ApplyPatch(typeof(ModerationManager),"ModForceOffMicRPC","ModForceOffMicPatch");
+            ApplyPatch(typeof(ModerationManager),"MuteChangeRPC","MutePatch");
+            ApplyPatch(typeof(VRCSDK2.VRC_EventHandler),"InternalTriggerEvent","TriggerEvent");
                 System.Console.WriteLine("all patches were applied successfully! (u cant b voted or kicked by world author/instance creator)");
             }
             catch(Exception e){System.Console.WriteLine(e.ToString());}
